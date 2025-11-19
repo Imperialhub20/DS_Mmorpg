@@ -12,6 +12,8 @@ def create_players():
     name2 = input("Enter Player2 username: ")
     
     players = {
+
+
 ##PLAYER1
         "Player1": {
         "Name" : name1,
@@ -39,7 +41,17 @@ def show_stats(players):
         print(f"{p["Name"]} | HP: {p['hp']} | Energy: {p['energy']}")
         print(" ==========")
         
+##valid skill
+def get_valid_skill(player_name):
+    valid_choices = ["A", "B", "C", "D", "E"]
 
+    while True:
+        choice = input(f"{player_name}, choose your skill (A-E): ")
+
+        if choice in valid_choices:
+            return choice
+        else:
+            print("Invalid input. Please use CAPITAL letters A, B, C, D, or E only.\n")
 
 ##SKILLS
 def show_skills():
@@ -49,6 +61,7 @@ def show_skills():
     print("C. Dodge: Bat Form (nullifies incoming attack; -10 energy)")
     print("D. Drain Life (Deals 6 damage then heals self by 10; -13 energy)")
     print("E. Do Nothing (-0 energy)\n")
+
 
 ##PLAYERMOVE
 def use_skill(attacker, defender, choice):
@@ -97,18 +110,21 @@ def use_skill(attacker, defender, choice):
 ##Round_Rest
 
  #-- Flow of the game --
+
+ ##Introductionn
 print_intro()
 players = create_players()
 
 print(f"\n Let The duel between {players['Player1']['Name']} and {players['Player2']['Name']} begins!")
 show_stats(players)
-
+  
 show_skills()
 
-p1_choice = input(f"{players['Player1']['Name']}, choose your skills: ")
-p2_choice = input(f"{players['Player2']['Name']}, choose your skills: ")
+## Validated skills choices
+p1_choice = get_valid_skill(players["Player1"]["Name"])
+p2_choice = get_valid_skill(players["Player2"]["Name"])
 
-
+## player using skills
 use_skill(players["Player1"], players["Player2"], p1_choice)
 use_skill(players["Player2"], players["Player1"], p2_choice)
 
