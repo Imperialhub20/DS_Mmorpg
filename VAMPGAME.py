@@ -149,6 +149,7 @@ while True:  #Play again loop
         p2_choice = get_valid_skill(players["Player2"]["Name"])
 
         #Execute moves
+        print("\nMove effects: ")
         use_skill(players["Player1"], players["Player2"], p1_choice)
         use_skill(players["Player2"], players["Player1"], p2_choice)
 
