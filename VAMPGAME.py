@@ -34,6 +34,11 @@ def create_players():
 }
     return players
 
+##Night round
+def start_night(night_number):
+    print("\n === Night" + str(night_number) + " ===" )
+    
+
 ##STATS
 def show_stats(players):
     print("\n ========== \nPlayer Status \n ----------")
@@ -65,11 +70,14 @@ def show_skills():
 
 ##PLAYERMOVE
 def use_skill(attacker, defender, choice):
+
+    attacker["dodge"] = False
+
     if choice == "A":
         if attacker["energy"] >= 6:
             attacker["energy"] -= 6
             defender["hp"] -= 10
-            print(f" {attacker['Name']} use Dagger Slash!!")
+            print(f"{attacker['Name']} use Dagger Slash!!")
         else: 
             print("Not enough Energy..")
     
@@ -103,30 +111,68 @@ def use_skill(attacker, defender, choice):
         print(f"{attacker['Name']} used Do nothing!")
     else:
         print("He done nothing...")
-    
+
+def rest_third_round(players):
+    if players["energy"] == 0:
+        print(f"{players['Name']} had a **Partial Rest** (+20HP, +13Energy).")
+        players['hp'] += 20
+        players['energy'] += 13
+    else:
+        print(f"{players['Name']} had a **Full rest** (+25HP, +20Energy).")
+        players['hp'] += 25
+        players['energy'] += 20
 
 
-
-##Round_Rest
 
  #-- Flow of the game --
 
- ##Introductionn
+ ##Introduction
+
 print_intro()
 players = create_players()
 
-print(f"\n Let The duel between {players['Player1']['Name']} and {players['Player2']['Name']} begins!")
-show_stats(players)
-  
-show_skills()
+night_number = 1
 
-## Validated skills choices
-p1_choice = get_valid_skill(players["Player1"]["Name"])
-p2_choice = get_valid_skill(players["Player2"]["Name"])
+print(f"\nLet the duel between {players['Player1']['Name']} and {players['Player2']['Name']} begin!")
 
-## player using skills
-use_skill(players["Player1"], players["Player2"], p1_choice)
-use_skill(players["Player2"], players["Player1"], p2_choice)
+while players["Player1"]["hp"] > 0 and players["Player2"]["hp"] > 0:
 
-show_stats(players)
+    print(f"\n=== Night {night_number} ===")
+    show_stats(players)
+    show_skills()
+
+    # Player Choices
+    p1_choice = get_valid_skill(players["Player1"]["Name"])
+    p2_choice = get_valid_skill(players["Player2"]["Name"])
+
+    # Player Attacks
+    print("\nMove Effects:")
+    use_skill(players["Player1"], players["Player2"], p1_choice)
+    use_skill(players["Player2"], players["Player1"], p2_choice)
+
+    input("\nPress any key to Continue...")
+    print()
+
+    # Check if someone died
+    if players["Player1"]["hp"] <= 0 or players["Player2"]["hp"] <= 0:
+        break
+
+    # REST AFTER FIGHT (every 3 nights)
+    if night_number % 3 == 0:
+        print("\n=== After a long battle, both Vampires rest in their coffins... ===\n")
+        rest_third_round(players["Player1"])
+        rest_third_round(players["Player2"])
+        print()
+
+    night_number += 1
+
+# ENDING
+print("\n===== GAME OVER =====")
+if players["Player1"]["hp"] <= 0 and players["Player2"]["hp"] <= 0:
+    print("Both players have fallen... It's a draw!")
+elif players["Player1"]["hp"] <= 0:
+    print(f"{players['Player2']['Name']} has ascended as the new Vampire Lord!")
+else:
+    print(f"{players['Player1']['Name']} has ascended as the new Vampire Lord!")
+
 
