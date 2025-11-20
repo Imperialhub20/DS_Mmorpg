@@ -1,6 +1,6 @@
 
 def print_intro():
-    print("Welcome to the VampireSpawn")
+    print("\nWelcome to the VampireSpawn")
     print("Fight for the right to ascend into vampire Lord")
     print("Use your vampiric moves to outsmart your opponent.\n")
     print("Players, enter your names...\n")
@@ -77,7 +77,7 @@ def use_skill(attacker, defender, choice):
         if attacker["energy"] >= 6:
             attacker["energy"] -= 6
             defender["hp"] -= 10
-            print(f"{attacker['Name']} use Dagger Slash!!")
+            print(f"{attacker['Name']} use Dagger Slash!! (-6 Energy)")
         else: 
             print("Not enough Energy..")
     
@@ -85,7 +85,7 @@ def use_skill(attacker, defender, choice):
         if attacker["energy"] >= 25:
             attacker["energy"] -= 25
             defender["hp"] -= 40
-            print(f"{attacker['Name']} use Vampiric Claws!")
+            print(f"{attacker['Name']} use Vampiric Claws! (-25 Energy)")
         else:
             print("Not enough energy...")
     
@@ -93,7 +93,7 @@ def use_skill(attacker, defender, choice):
         if attacker["energy"] >= 10:
             attacker["energy"] -= 10
             attacker["dodge"] = True
-            print(f"{attacker['Name']} The player temporarily morphs into a bat! dodges any attacks from the opponents in the current round!")
+            print(f"{attacker['Name']} The player temporarily morphs into a bat! (-10 Energy)")
         else:
             print(f"{attacker['Name']} Not enough energy...")
     
@@ -124,55 +124,58 @@ def rest_third_round(players):
 
 
 
- #-- Flow of the game --
+ #flow of the game
 
  ##Introduction
+ 
+while True:  #Play again loop
 
-print_intro()
-players = create_players()
+    print_intro()
+    players = create_players()
 
-night_number = 1
+    night_number = 1
 
-print(f"\nLet the duel between {players['Player1']['Name']} and {players['Player2']['Name']} begin!")
+    print(f"\nLet the duel between {players['Player1']['Name']} and {players['Player2']['Name']} begin!")
 
-while players["Player1"]["hp"] > 0 and players["Player2"]["hp"] > 0:
+    #MAIN BATTLE LOOP
+    while players["Player1"]["hp"] > 0 and players["Player2"]["hp"] > 0:
 
-    print(f"\n=== Night {night_number} ===")
-    show_stats(players)
-    show_skills()
+        print(f"\n === Night {night_number} ===")
+        show_stats(players)
+        show_skills()
 
-    # Player Choices
-    p1_choice = get_valid_skill(players["Player1"]["Name"])
-    p2_choice = get_valid_skill(players["Player2"]["Name"])
+        #Players choose moves
+        p1_choice = get_valid_skill(players["Player1"]["Name"])
+        p2_choice = get_valid_skill(players["Player2"]["Name"])
 
-    # Player Attacks
-    print("\nMove Effects:")
-    use_skill(players["Player1"], players["Player2"], p1_choice)
-    use_skill(players["Player2"], players["Player1"], p2_choice)
+        #Execute moves
+        use_skill(players["Player1"], players["Player2"], p1_choice)
+        use_skill(players["Player2"], players["Player1"], p2_choice)
 
-    input("\nPress any key to Continue...")
-    print()
+        #Check defeat
+        if players["Player1"]["hp"] <= 0 or players["Player2"]["hp"] <= 0:
+            break
 
-    # Check if someone died
-    if players["Player1"]["hp"] <= 0 or players["Player2"]["hp"] <= 0:
+        #Every 3rd round = Rest (after battle)
+        if night_number % 3 == 0:
+            print("\n === After a long battle, both Vampires rest in their coffins... ===\n")
+            rest_third_round(players["Player1"])
+            rest_third_round(players["Player2"])
+            print()
+
+        night_number += 1
+
+    #END GAME RESULTS
+    if players["Player1"]["hp"] <= 0 and players["Player2"]["hp"] <= 0:
+        print("Both players have fallen... It's a draw!")
+    elif players["Player1"]["hp"] <= 0:
+        print(f"{players['Player2']['Name']} has ascended as the new Vampire Lord!")
+    else:
+        print(f"{players['Player1']['Name']} has ascended as the new Vampire Lord!")
+
+    #PLAY AGAIN
+    play_again = input("\nWould you like to play again? (Y/N): ").upper()
+    if play_again != "Y":
+        print("Farewell... until the next blood moon.")
         break
-
-    # REST AFTER FIGHT (every 3 nights)
-    if night_number % 3 == 0:
-        print("\n=== After a long battle, both Vampires rest in their coffins... ===\n")
-        rest_third_round(players["Player1"])
-        rest_third_round(players["Player2"])
-        print()
-
-    night_number += 1
-
-# ENDING
-print("\n===== GAME OVER =====")
-if players["Player1"]["hp"] <= 0 and players["Player2"]["hp"] <= 0:
-    print("Both players have fallen... It's a draw!")
-elif players["Player1"]["hp"] <= 0:
-    print(f"{players['Player2']['Name']} has ascended as the new Vampire Lord!")
-else:
-    print(f"{players['Player1']['Name']} has ascended as the new Vampire Lord!")
-
 
